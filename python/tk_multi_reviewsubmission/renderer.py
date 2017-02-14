@@ -73,10 +73,15 @@ class Renderer(object):
             read["last"].setValue(last_frame)
             if color_space:
                 read["colorspace"].setValue(color_space)
-            
+ 
+
+            # create a scale node
+            scale = self.__create_scale_node(width, height)
+            scale.setInput(0, read)                
+
             # now create the slate/burnin node
             burn = nuke.nodePaste(self._burnin_nk) 
-            burn.setInput(0, read)
+            burn.setInput(0, scale)
         
             # set the fonts for all text fields
             burn.node("top_left_text")["font"].setValue(self._font)
@@ -118,13 +123,9 @@ class Renderer(object):
             
             burn.node("slate_info")["message"].setValue(slate_str)
 
-            # create a scale node
-            scale = self.__create_scale_node(width, height)
-            scale.setInput(0, burn)                
-
             # Create the output node
             output_node = self.__create_output_node(output_path)
-            output_node.setInput(0, scale)
+            output_node.setInput(0, burn)
         finally:
             group.end()
     
