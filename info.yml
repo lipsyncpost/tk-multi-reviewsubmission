@@ -64,6 +64,11 @@ configuration:
                      number padding in the movie filename. See movie_path_template.
                      Use 1 for no padding.
 
+    burnin_path:
+        type: str
+        description: Set the path to the burnin.nk script
+        default_value: "{self}/resources/burnin.nk"
+
     slate_logo:
         type: config_path
         description: This is the path to an image to use on the slate such as a

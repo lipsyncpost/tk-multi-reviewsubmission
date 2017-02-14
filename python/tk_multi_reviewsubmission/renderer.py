@@ -21,7 +21,9 @@ class Renderer(object):
         """
         self.__app = sgtk.platform.current_bundle() 
         
-        self._burnin_nk = os.path.join(self.__app.disk_location, "resources", "burnin.nk")
+        unresolved_burnin_path = self.__app.get_setting("burnin_path", "{self}/resources/burnin.nk")
+        self._burnin_nk = self._resolve_path_expression(unresolved_burnin_path)
+
         self._font = os.path.join(self.__app.disk_location, "resources", "liberationsans_regular.ttf")
         
         # If the slate_logo supplied was an empty string, the result of getting 
@@ -186,3 +188,26 @@ class Renderer(object):
             node["file"].setValue(path.replace(os.sep, "/"))
 
         return node  
+
+    def _resolve_path_expression(self, expression):
+
+        path = expression
+
+        if expression.startswith("{self}"):
+            # bundle local reference
+            path = expression.replace("{self}", self.__app.disk_location)
+            path = path.replace("/", os.path.sep)
+
+        elif expression.startswith("{config}"):
+            # config resolve
+            config_folder = self.__app.tank.pipeline_configuration.get_config_location()
+            path = expression.replace("{config}", config_folder)
+            path = path.replace("/", os.path.sep)
+
+        elif expression.startswith("{project}"):
+            # config resolve
+            project_folder = self.__app.tank.project_path
+            path = expression.replace("{project}", project_folder)
+            path = path.replace("/", os.path.sep)
+
+        return path    
