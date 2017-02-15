@@ -15,7 +15,7 @@ define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
                     <page id="Viewer.1"/>
                 </dock>
                 <split size="401"/>
-                <dock id="" activePageId="DAG.1">
+                <dock id="" activePageId="DAG.1" focus="true">
                     <page id="DAG.1"/>
                     <page id="Curve Editor.1"/>
                     <page id="DopeSheet.1"/>
@@ -37,11 +37,13 @@ Root {
 Group {
  inputs 0
  name Group1
+ selected true
  xpos 125
- ypos -19
+ ypos -20
 }
  Read {
   inputs 0
+  file "\[python nuke.toNode(\"Input1\").metadata('slate/logo')]"
   format "256 256 0 0 256 256 1 square_256"
   origset true
   premultiplied true
@@ -49,6 +51,7 @@ Group {
   xpos 182
   ypos 112
  }
+set N57a39b0 [stack 0]
  Reformat {
   type "to box"
   box_width 400
@@ -81,7 +84,8 @@ Group {
   ypos 237
  }
  Text {
-  message ""
+  message "\[python nuke.toNode(\"Input1\").metadata('slate/info') ]\n"
+  font "\[python nuke.toNode(\"Input1\").metadata('slate/font')]"
   size {{"Input1.height * 0.08"}}
   leading 0.3
   yjustify top
@@ -106,7 +110,15 @@ Group {
  Input {
   inputs 0
   name Input1
-  xpos 434
-  ypos 109
+  xpos 435
+  ypos 141
+ }
+push $N57a39b0
+ Viewer {
+  frame 1
+  frame_range 1-100
+  name Viewer1
+  xpos 182
+  ypos 196
  }
 end_group

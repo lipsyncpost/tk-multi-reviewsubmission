@@ -65,6 +65,46 @@ class Renderer(object):
         output_node = None
         ctx = self.__app.context
 
+        metadata = {}
+
+        metadata['slate/font'] = self._font
+        metadata['burnin/font'] = self._font
+        metadata['burnin/top_left'] = ctx.project["name"]
+        metadata['burnin/top_right'] = ctx.entity["name"]
+        metadata['burnin/bottom_right'] = "[format %04d [frame]]"
+        metadata['slate/logo'] = self._logo
+
+
+        # format the burnins
+        version_padding_format = "%%0%dd" % self.__app.get_setting("version_number_padding")
+        version_str = version_padding_format % version
+            
+        if ctx.task:
+            version_label = "%s, v%s" % (ctx.task["name"], version_str)
+        elif ctx.step:
+            version_label = "%s, v%s" % (ctx.step["name"], version_str)
+        else:
+            version_label = "v%s" % version_str
+        
+        metadata['burnin/bottom_left'] = version_label
+
+            
+           
+        slate_str =  "Project: %s\n" % ctx.project["name"]
+        slate_str += "%s: %s\n" % (ctx.entity["type"], ctx.entity["name"])
+        slate_str += "Name: %s\n" % name.capitalize()
+        slate_str += "Version: %s\n" % version_str
+            
+        if ctx.task:
+            slate_str += "Task: %s\n" % ctx.task["name"]
+        elif ctx.step:
+            slate_str += "Step: %s\n" % ctx.step["name"]
+            
+        slate_str += "Frames: %s - %s\n" % (first_frame, last_frame)
+            
+        metadata['slate/info'] = slate_str
+
+
         # create group where everything happens
         group = nuke.nodes.Group()
         
@@ -84,54 +124,19 @@ class Renderer(object):
             scale = self.__create_scale_node(width, height)
             scale.setInput(0, read)
 
+            # add the metadata to be used by the slate and burnin nodes
+
+            mmd = self.__create_metadata_node(metadata)
+            mmd.setInput(0, scale)
+
             # now create the slate and burnin nodes
 
             slate = nuke.nodePaste(self._slate_nk) 
-            slate.setInput(0, scale)
+            slate.setInput(0, mmd)
 
 
             burn = nuke.nodePaste(self._burnin_nk) 
-            burn.setInput(0, scale)
-        
-            # set the fonts for all text fields
-            burn.node("top_left_text")["font"].setValue(self._font)
-            burn.node("top_right_text")["font"].setValue(self._font)
-            burn.node("bottom_left_text")["font"].setValue(self._font)
-            burn.node("framecounter")["font"].setValue(self._font)
-            slate.node("slate_info")["font"].setValue(self._font)
-        
-            # add the logo
-            slate.node("logo")["file"].setValue(self._logo)
-            
-            # format the burnins
-            version_padding_format = "%%0%dd" % self.__app.get_setting("version_number_padding")
-            version_str = version_padding_format % version
-            
-            if ctx.task:
-                version_label = "%s, v%s" % (ctx.task["name"], version_str)
-            elif ctx.step:
-                version_label = "%s, v%s" % (ctx.step["name"], version_str)
-            else:
-                version_label = "v%s" % version_str
-            
-            burn.node("top_left_text")["message"].setValue(ctx.project["name"])
-            burn.node("top_right_text")["message"].setValue(ctx.entity["name"])
-            burn.node("bottom_left_text")["message"].setValue(version_label)
-            
-            # and the slate            
-            slate_str =  "Project: %s\n" % ctx.project["name"]
-            slate_str += "%s: %s\n" % (ctx.entity["type"], ctx.entity["name"])
-            slate_str += "Name: %s\n" % name.capitalize()
-            slate_str += "Version: %s\n" % version_str
-            
-            if ctx.task:
-                slate_str += "Task: %s\n" % ctx.task["name"]
-            elif ctx.step:
-                slate_str += "Step: %s\n" % ctx.step["name"]
-            
-            slate_str += "Frames: %s - %s\n" % (first_frame, last_frame)
-            
-            slate.node("slate_info")["message"].setValue(slate_str)
+            burn.setInput(0, mmd)
 
             switch = self.__create_switch_node(slate, burn)
 
@@ -207,6 +212,24 @@ class Renderer(object):
         node.setInput(1, burn)
 
         return node
+
+    def __create_metadata_node(self, data):
+
+        node = nuke.nodes.ModifyMetaData( metadata=" ".join([ "{set %s \"%s\"}" % (self.__escape_metadata(key), self.__escape_metadata(value)) for key,value in data.iteritems()])  )
+        return node
+
+    def __escape_metadata(self, value):
+
+        kCharacterEscapeTable = (
+            ("\\", "\\\\"),
+            ("{", "\\{"),
+            ("}", "\\}")
+        )
+
+        for before, after in kCharacterEscapeTable:
+            value = value.replace(before,after) 
+        return value 
+
 
     def _resolve_path_expression(self, expression):
 

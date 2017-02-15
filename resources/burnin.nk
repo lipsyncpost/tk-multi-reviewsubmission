@@ -15,7 +15,7 @@ define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
                     <page id="Viewer.1"/>
                 </dock>
                 <split size="401"/>
-                <dock id="" activePageId="DAG.1">
+                <dock id="" activePageId="DAG.2" focus="true">
                     <page id="DAG.1"/>
                     <page id="Curve Editor.1"/>
                     <page id="DopeSheet.1"/>
@@ -37,8 +37,9 @@ Root {
 Group {
  inputs 0
  name Group1
- xpos 79
- ypos -2
+ selected true
+ xpos 37
+ ypos -11
 }
  Input {
   inputs 0
@@ -47,51 +48,54 @@ Group {
   ypos 161
  }
  Text {
-  message "\{top_left\}"
+  message "\[python nuke.thisNode().metadata('burnin/top_left')]"
+  font "\[python nuke.thisNode().metadata('burnin/font')]"
   size {{"Input1.height * 0.04"}}
   yjustify top
   Transform 1
   box {{"Input1.width * 0.01"} {"Input1.height * 0.9"} {"Input1.width * 0.49"} {"Input1.height * 0.99"}}
   name top_left_text
-  xpos 311
-  ypos 279
+  xpos 115
+  ypos 282
  }
  Text {
-  message "\[format %04d \[frame]]"
-  size {{"Input1.height * 0.04"}}
-  xjustify right
-  yjustify bottom
-  Transform 1
-  box {{"Input1.width * 0.51"} {"Input1.height * 0.01"} {Input1.width*0.99} {"Input1.height * 0.1"}}
-  name framecounter
-  xpos 311
-  ypos 303
- }
- Text {
-  message "\{top_right\}\n"
+  message "\[python nuke.thisNode().metadata('burnin/top_right')]"
+  font "\[python nuke.thisNode().metadata('burnin/font')]"
   size {{"Input1.height * 0.04"}}
   xjustify right
   yjustify top
   Transform 1
   box {{"Input1.width * 0.51"} {"Input1.height * 0.9"} {"Input1.width * 0.99"} {"Input1.height * 0.99"}}
   name top_right_text
-  xpos 311
-  ypos 329
+  xpos 502
+  ypos 282
  }
  Text {
-  message "\{bottom left\}"
+  message "\[python nuke.thisNode().metadata('burnin/bottom_left')]"
+  font "\[python nuke.thisNode().metadata('burnin/font')]"
   size {{"Input1.height * 0.04"}}
   yjustify bottom
   Transform 1
   box {{"Input1.width * 0.01"} {"Input1.height * 0.01"} {"Input1.width * 0.49"} {"Input1.height * 0.1"}}
   name bottom_left_text
-  xpos 311
-  ypos 355
+  xpos 110
+  ypos 488
+ }
+ Text {
+  message "\[python nuke.thisNode().metadata('burnin/bottom_right')]"
+  font "\[python nuke.thisNode().metadata('burnin/font')]"
+  size {{"Input1.height * 0.04"}}
+  xjustify right
+  yjustify bottom
+  Transform 1
+  box {{"Input1.width * 0.51"} {"Input1.height * 0.01"} {Input1.width*0.99} {"Input1.height * 0.1"}}
+  name bottom_right_text
+  xpos 516
+  ypos 488
  }
  Output {
   name Output1
-  selected true
-  xpos 311
-  ypos 496
+  xpos 516
+  ypos 571
  }
 end_group
