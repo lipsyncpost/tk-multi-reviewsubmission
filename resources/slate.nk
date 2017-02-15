@@ -32,66 +32,81 @@ define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
 }
 Root {
  inputs 0
- name /home/stevenk/Dev/tk-multi-reviewsubmission/resources/burnin.nk
+ name /home/stevenk/Dev/tk-multi-reviewsubmission/resources/slate.nk
 }
 Group {
  inputs 0
  name Group1
- xpos 79
- ypos -2
+ xpos 125
+ ypos -19
 }
+ Read {
+  inputs 0
+  format "256 256 0 0 256 256 1 square_256"
+  origset true
+  premultiplied true
+  name logo
+  xpos 182
+  ypos 112
+ }
+ Reformat {
+  type "to box"
+  box_width 400
+  box_height {{"Input1.height * 0.2"}}
+  resize height
+  name Reformat1
+  xpos 182
+  ypos 269
+ }
+ Transform {
+  translate {{"Input1.width * 0.05"} {"Input1.height * 0.05"}}
+  name Transform
+  xpos 182
+  ypos 344
+ }
+ Constant {
+  inputs 0
+  name slate_base
+  xpos 93
+  ypos 115
+ }
+ Reformat {
+  type "to box"
+  box_width {{Input1.width}}
+  box_height {{Input1.height}}
+  box_fixed true
+  resize distort
+  name Reformat2
+  xpos 93
+  ypos 237
+ }
+ Text {
+  message ""
+  size {{"Input1.height * 0.08"}}
+  leading 0.3
+  yjustify top
+  Transform 1
+  box {{Input1.width*0.2} {"Input1.height * 0.1"} {"Input1.width * 0.91"} {"Input1.height * 0.9"}}
+  name slate_info
+  xpos 93
+  ypos 319
+ }
+ Merge {
+  inputs 2
+  bbox B
+  name slate_merge
+  xpos 137
+  ypos 395
+ }
+ Output {
+  name Output2
+  xpos 311
+  ypos 640
+ }
  Input {
   inputs 0
   name Input1
-  xpos 311
-  ypos 161
- }
- Text {
-  message "\{top_left\}"
-  size {{"Input1.height * 0.04"}}
-  yjustify top
-  Transform 1
-  box {{"Input1.width * 0.01"} {"Input1.height * 0.9"} {"Input1.width * 0.49"} {"Input1.height * 0.99"}}
-  name top_left_text
-  xpos 311
-  ypos 279
- }
- Text {
-  message "\[format %04d \[frame]]"
-  size {{"Input1.height * 0.04"}}
-  xjustify right
-  yjustify bottom
-  Transform 1
-  box {{"Input1.width * 0.51"} {"Input1.height * 0.01"} {Input1.width*0.99} {"Input1.height * 0.1"}}
-  name framecounter
-  xpos 311
-  ypos 303
- }
- Text {
-  message "\{top_right\}\n"
-  size {{"Input1.height * 0.04"}}
-  xjustify right
-  yjustify top
-  Transform 1
-  box {{"Input1.width * 0.51"} {"Input1.height * 0.9"} {"Input1.width * 0.99"} {"Input1.height * 0.99"}}
-  name top_right_text
-  xpos 311
-  ypos 329
- }
- Text {
-  message "\{bottom left\}"
-  size {{"Input1.height * 0.04"}}
-  yjustify bottom
-  Transform 1
-  box {{"Input1.width * 0.01"} {"Input1.height * 0.01"} {"Input1.width * 0.49"} {"Input1.height * 0.1"}}
-  name bottom_left_text
-  xpos 311
-  ypos 355
- }
- Output {
-  name Output1
-  selected true
-  xpos 311
-  ypos 496
+  xpos 434
+  ypos 109
  }
 end_group

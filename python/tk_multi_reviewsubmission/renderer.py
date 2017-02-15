@@ -21,6 +21,9 @@ class Renderer(object):
         """
         self.__app = sgtk.platform.current_bundle() 
         
+        unresolved_slate_path = self.__app.get_setting("slate_path", "{self}/resources/slate.nk")
+        self._slate_nk = self._resolve_path_expression(unresolved_slate_path)
+
         unresolved_burnin_path = self.__app.get_setting("burnin_path", "{self}/resources/burnin.nk")
         self._burnin_nk = self._resolve_path_expression(unresolved_burnin_path)
 
@@ -79,9 +82,14 @@ class Renderer(object):
 
             # create a scale node
             scale = self.__create_scale_node(width, height)
-            scale.setInput(0, read)                
+            scale.setInput(0, read)
 
-            # now create the slate/burnin node
+            # now create the slate and burnin nodes
+
+            slate = nuke.nodePaste(self._slate_nk) 
+            slate.setInput(0, scale)
+
+
             burn = nuke.nodePaste(self._burnin_nk) 
             burn.setInput(0, scale)
         
@@ -90,10 +98,10 @@ class Renderer(object):
             burn.node("top_right_text")["font"].setValue(self._font)
             burn.node("bottom_left_text")["font"].setValue(self._font)
             burn.node("framecounter")["font"].setValue(self._font)
-            burn.node("slate_info")["font"].setValue(self._font)
+            slate.node("slate_info")["font"].setValue(self._font)
         
             # add the logo
-            burn.node("logo")["file"].setValue(self._logo)
+            slate.node("logo")["file"].setValue(self._logo)
             
             # format the burnins
             version_padding_format = "%%0%dd" % self.__app.get_setting("version_number_padding")
@@ -123,11 +131,13 @@ class Renderer(object):
             
             slate_str += "Frames: %s - %s\n" % (first_frame, last_frame)
             
-            burn.node("slate_info")["message"].setValue(slate_str)
+            slate.node("slate_info")["message"].setValue(slate_str)
+
+            switch = self.__create_switch_node(slate, burn)
 
             # Create the output node
             output_node = self.__create_output_node(output_path)
-            output_node.setInput(0, burn)
+            output_node.setInput(0, switch)
         finally:
             group.end()
     
@@ -188,6 +198,15 @@ class Renderer(object):
             node["file"].setValue(path.replace(os.sep, "/"))
 
         return node  
+
+    def __create_switch_node(self, slate, burn):
+
+        node = nuke.nodes.Switch()
+        node.knob('which').setExpression('[python nuke.root()\["frame"\].value() >= nuke.root()\["first_frame"\].value() ]')
+        node.setInput(0, slate)
+        node.setInput(1, burn)
+
+        return node
 
     def _resolve_path_expression(self, expression):
 
