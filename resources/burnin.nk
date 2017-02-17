@@ -1,11 +1,45 @@
-set cut_paste_input [stack 0]
+#! /sw/pkg/foundry/nuke/Nuke10.0v1/libnuke-10.0.1.so -nx
 version 10.0 v1
-push $cut_paste_input
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="1680" y="22" w="1680" h="1028" screen="0">
+        <splitter orientation="1">
+            <split size="40"/>
+            <dock id="" hideTitles="1" activePageId="Toolbar.1">
+                <page id="Toolbar.1"/>
+            </dock>
+            <split size="1013" stretch="1"/>
+            <splitter orientation="2">
+                <split size="571"/>
+                <dock id="" activePageId="Viewer.1">
+                    <page id="Viewer.1"/>
+                </dock>
+                <split size="401"/>
+                <dock id="" activePageId="DAG.2" focus="true">
+                    <page id="DAG.1"/>
+                    <page id="Curve Editor.1"/>
+                    <page id="DopeSheet.1"/>
+                    <page id="DAG.2"/>
+                </dock>
+            </splitter>
+            <split size="615"/>
+            <dock id="" activePageId="Properties.1">
+                <page id="Properties.1"/>
+            </dock>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name /home/stevenk/Dev/tk-multi-reviewsubmission/resources/burnin.nk
+}
 Group {
+ inputs 0
  name Group1
  selected true
- xpos 79
- ypos -2
+ xpos 37
+ ypos -11
 }
  Input {
   inputs 0
@@ -14,121 +48,54 @@ Group {
   ypos 161
  }
  Text {
-  message "\{top_left\}"
+  message "\[python nuke.thisNode().metadata('burnin/top_left')]"
+  font "\[python nuke.thisNode().metadata('burnin/font')]"
   size {{"Input1.height * 0.04"}}
   yjustify top
   Transform 1
   box {{"Input1.width * 0.01"} {"Input1.height * 0.9"} {"Input1.width * 0.49"} {"Input1.height * 0.99"}}
   name top_left_text
-  xpos 311
-  ypos 279
+  xpos 115
+  ypos 282
  }
  Text {
-  message "\[format %04d \[frame]]"
-  size {{"Input1.height * 0.04"}}
-  xjustify right
-  yjustify bottom
-  Transform 1
-  box {{"Input1.width * 0.51"} {"Input1.height * 0.01"} {Input1.width*0.99} {"Input1.height * 0.1"}}
-  name framecounter
-  xpos 311
-  ypos 303
- }
- Text {
-  message "\{top_right\}\n"
+  message "\[python nuke.thisNode().metadata('burnin/top_right')]"
+  font "\[python nuke.thisNode().metadata('burnin/font')]"
   size {{"Input1.height * 0.04"}}
   xjustify right
   yjustify top
   Transform 1
   box {{"Input1.width * 0.51"} {"Input1.height * 0.9"} {"Input1.width * 0.99"} {"Input1.height * 0.99"}}
   name top_right_text
-  xpos 311
-  ypos 329
+  xpos 502
+  ypos 282
  }
  Text {
-  message "\{bottom left\}"
+  message "\[python nuke.thisNode().metadata('burnin/bottom_left')]"
+  font "\[python nuke.thisNode().metadata('burnin/font')]"
   size {{"Input1.height * 0.04"}}
   yjustify bottom
   Transform 1
   box {{"Input1.width * 0.01"} {"Input1.height * 0.01"} {"Input1.width * 0.49"} {"Input1.height * 0.1"}}
   name bottom_left_text
-  xpos 311
-  ypos 355
- }
- Read {
-  inputs 0
-  format "256 256 0 0 256 256 1 square_256"
-  origset true
-  premultiplied true
-  name logo
-  xpos 182
-  ypos 88
- }
- Reformat {
-  type "to box"
-  box_width 400
-  box_height {{"Input1.height * 0.2"}}
-  resize height
-  name Reformat1
-  xpos 182
-  ypos 269
- }
- Transform {
-  translate {{"Input1.width * 0.05"} {"Input1.height * 0.05"}}
-  name Transform
-  xpos 182
-  ypos 344
- }
- Constant {
-  inputs 0
-  name slate_base
-  xpos 93
-  ypos 115
- }
- Reformat {
-  type "to box"
-  box_width {{Input1.width}}
-  box_height {{Input1.height}}
-  box_fixed true
-  resize distort
-  name Reformat2
-  xpos 93
-  ypos 237
+  xpos 110
+  ypos 488
  }
  Text {
-  message ""
-  size {{"Input1.height * 0.08"}}
-  leading 0.3
-  yjustify top
+  message "\[python nuke.thisNode().metadata('burnin/bottom_right')]"
+  font "\[python nuke.thisNode().metadata('burnin/font')]"
+  size {{"Input1.height * 0.04"}}
+  xjustify right
+  yjustify bottom
   Transform 1
-  box {{Input1.width*0.2} {"Input1.height * 0.1"} {"Input1.width * 0.91"} {"Input1.height * 0.9"}}
-  name slate_info
-  xpos 93
-  ypos 319
- }
- Merge {
-  inputs 2
-  bbox B
-  name slate_merge
-  xpos 137
-  ypos 395
- }
- Switch {
-  inputs 2
-  which {{"\[python -execlocal first_frame\\ =\\ nuke.root()\\\[\\\"first_frame\\\"\\].value()\\ncurr_frame\\ =\\ nuke.root()\\\[\\\"frame\\\"\\].value()\\n\\nif\\ curr_frame\\ <\\ first_frame:\\n\\ \\ #\\ frames\\ before\\ the\\ start\\ of\\ the\\ sequence\\n\\ \\ #\\ switch\\ to\\ slate\\n\\ \\ ret\\ =\\ 0\\nelse:\\n\\ \\ #\\ play\\ back\\ sequence\\ with\\ burnins\\n\\ \\ ret\\ =\\ 1\\n\\n]" x4 0 x1004 0 x1005 1}}
-  name slate_or_burnin_chooser
-  label "Switches to the slate if curr_frame < start_frame for the current scene."
-  xpos 311
-  ypos 414
+  box {{"Input1.width * 0.51"} {"Input1.height * 0.01"} {Input1.width*0.99} {"Input1.height * 0.1"}}
+  name bottom_right_text
+  xpos 516
+  ypos 488
  }
  Output {
   name Output1
-  xpos 311
-  ypos 540
- }
- Output {
-  name Output1
-  xpos 311
-  ypos 640
+  xpos 516
+  ypos 571
  }
 end_group

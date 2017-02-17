@@ -1,0 +1,124 @@
+#! /sw/pkg/foundry/nuke/Nuke10.0v1/libnuke-10.0.1.so -nx
+version 10.0 v1
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="1680" y="22" w="1680" h="1028" screen="0">
+        <splitter orientation="1">
+            <split size="40"/>
+            <dock id="" hideTitles="1" activePageId="Toolbar.1">
+                <page id="Toolbar.1"/>
+            </dock>
+            <split size="1013" stretch="1"/>
+            <splitter orientation="2">
+                <split size="571"/>
+                <dock id="" activePageId="Viewer.1">
+                    <page id="Viewer.1"/>
+                </dock>
+                <split size="401"/>
+                <dock id="" activePageId="DAG.1" focus="true">
+                    <page id="DAG.1"/>
+                    <page id="Curve Editor.1"/>
+                    <page id="DopeSheet.1"/>
+                    <page id="DAG.2"/>
+                </dock>
+            </splitter>
+            <split size="615"/>
+            <dock id="" activePageId="Properties.1">
+                <page id="Properties.1"/>
+            </dock>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name /home/stevenk/Dev/tk-multi-reviewsubmission/resources/slate.nk
+}
+Group {
+ inputs 0
+ name Group1
+ selected true
+ xpos 125
+ ypos -20
+}
+ Read {
+  inputs 0
+  file "\[python nuke.toNode(\"Input1\").metadata('slate/logo')]"
+  format "256 256 0 0 256 256 1 square_256"
+  origset true
+  premultiplied true
+  name logo
+  xpos 182
+  ypos 112
+ }
+set N57a39b0 [stack 0]
+ Reformat {
+  type "to box"
+  box_width 400
+  box_height {{"Input1.height * 0.2"}}
+  resize height
+  name Reformat1
+  xpos 182
+  ypos 269
+ }
+ Transform {
+  translate {{"Input1.width * 0.05"} {"Input1.height * 0.05"}}
+  name Transform
+  xpos 182
+  ypos 344
+ }
+ Constant {
+  inputs 0
+  name slate_base
+  xpos 93
+  ypos 115
+ }
+ Reformat {
+  type "to box"
+  box_width {{Input1.width}}
+  box_height {{Input1.height}}
+  box_fixed true
+  resize distort
+  name Reformat2
+  xpos 93
+  ypos 237
+ }
+ Text {
+  message "\[python nuke.toNode(\"Input1\").metadata('slate/info') ]\n"
+  font "\[python nuke.toNode(\"Input1\").metadata('slate/font')]"
+  size {{"Input1.height * 0.08"}}
+  leading 0.3
+  yjustify top
+  Transform 1
+  box {{Input1.width*0.2} {"Input1.height * 0.1"} {"Input1.width * 0.91"} {"Input1.height * 0.9"}}
+  name slate_info
+  xpos 93
+  ypos 319
+ }
+ Merge {
+  inputs 2
+  bbox B
+  name slate_merge
+  xpos 137
+  ypos 395
+ }
+ Output {
+  name Output2
+  xpos 311
+  ypos 640
+ }
+ Input {
+  inputs 0
+  name Input1
+  xpos 435
+  ypos 141
+ }
+push $N57a39b0
+ Viewer {
+  frame 1
+  frame_range 1-100
+  name Viewer1
+  xpos 182
+  ypos 196
+ }
+end_group
