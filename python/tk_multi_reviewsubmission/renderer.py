@@ -166,7 +166,7 @@ class Renderer(object):
         scale["type"].setValue("to box")
         scale["box_width"].setValue(width)
         scale["box_height"].setValue(height)
-        scale["resize"].setValue("fit")
+        scale["resize"].setValue(self.__app.get_setting("reformat_method", "fit"))
         scale["box_fixed"].setValue(True)
         scale["center"].setValue(True)
         scale["black_outside"].setValue(True)

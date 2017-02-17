@@ -85,6 +85,11 @@ configuration:
                      for review.
         default_value: '{self}/codec_settings.py'
 
+    reformat_method:
+        type: str
+        description: "Nuke method to use when reformatting to output size"
+        default_value: "fit"
+        
 # the Shotgun fields that this app needs in order to operate correctly
 requires_shotgun_fields:
 
