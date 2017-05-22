@@ -118,11 +118,15 @@ class Renderer(object):
             read["last"].setValue(last_frame)
             if color_space:
                 read["colorspace"].setValue(color_space)
- 
 
-            # create a scale node
+            # CAT5 Reformat
+            reformat = nuke.nodes.CAT5_reformat()
+            reformat.setInput(0, read)
+
+
+            # # create a scale node
             scale = self.__create_scale_node(width, height)
-            scale.setInput(0, read)
+            scale.setInput(0, reformat)
 
             # add the metadata to be used by the slate and burnin nodes
 
